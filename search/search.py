@@ -138,33 +138,33 @@ def depth_first_search(problem):
     frontier = util.Stack()
     expandedNodes = []
     path = []
-    startNode = SearchNode(None,problem.get_start_state())
-    expandedNodes.append(startNode) 
-    
-    for succ in startSucc:
-        node = SearchNode(startNode,succ)
-        frontier.push(node)
+    print(problem.get_start_state())
 
-   
+    for succ in startSucc:
+        node = SearchNode(None,succ)
+        frontier.push(node)
+        expandedNodes.append(node)
+
+        
     while not frontier.is_empty():
         currentNode = frontier.pop()
+        print(currentNode.state)
         expandedNodes.append(currentNode)
-        ##print(currentNode.state)
         if(problem.is_goal_state(currentNode.state)):
-            print("Win")
-            ##path = currentNode.get_path()
-            break
+            path = currentNode.get_path()
+            print(path)
+            return path
         nextSucc = problem.get_successors(currentNode.state)
-
         for succ in nextSucc:
-            if(succ not in expandedNodes):
-                nextNode = SearchNode(currentNode,succ)
-                frontier.push(nextNode)
+            nextNode = SearchNode(currentNode,succ)
+            frontier.push(nextNode)
+            for exp in expandedNodes:
+                if(exp.state == nextNode.state):
+                    frontier.pop()
+        for exp in expandedNodes:
+            print(exp.state, end=" ")
+        print(" ")
 
-    sol = []
-    for e in path:
-        sol.append(e.action)
-    
     util.raise_not_defined()
 
 
