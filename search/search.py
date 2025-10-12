@@ -133,6 +133,38 @@ def depth_first_search(problem):
     print("Start's successors:", problem.get_successors(problem.get_start_state()))
     """
     "*** YOUR CODE HERE ***"
+    
+    startSucc = problem.get_successors(problem.get_start_state())
+    frontier = util.Stack()
+    expandedNodes = []
+    path = []
+    startNode = SearchNode(None,problem.get_start_state())
+    expandedNodes.append(startNode) 
+    
+    for succ in startSucc:
+        node = SearchNode(startNode,succ)
+        frontier.push(node)
+
+   
+    while not frontier.is_empty():
+        currentNode = frontier.pop()
+        expandedNodes.append(currentNode)
+        ##print(currentNode.state)
+        if(problem.is_goal_state(currentNode.state)):
+            print("Win")
+            ##path = currentNode.get_path()
+            break
+        nextSucc = problem.get_successors(currentNode.state)
+
+        for succ in nextSucc:
+            if(succ not in expandedNodes):
+                nextNode = SearchNode(currentNode,succ)
+                frontier.push(nextNode)
+
+    sol = []
+    for e in path:
+        sol.append(e.action)
+    
     util.raise_not_defined()
 
 
