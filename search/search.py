@@ -200,6 +200,34 @@ def breadth_first_search(problem):
 def uniform_cost_search(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    startSucc = problem.get_successors(problem.get_start_state())
+    startNode = SearchNode(None,(problem.get_start_state(),"",1))
+    frontier = util.PriorityQueue()
+    expandedNodes = []
+    path = []
+    #print(problem.get_start_state())
+
+    for succ in startSucc:
+        node = SearchNode(startNode,succ)
+        frontier.push(node,succ[2])
+    
+    while not frontier.is_empty():
+        currentNode = frontier.pop()
+        expandedNodes.append(currentNode)
+        if(problem.is_goal_state(currentNode.state)):
+            path = currentNode.get_path()
+            #print(path)
+            return path
+        nextSucc = problem.get_successors(currentNode.state)
+        for succ in nextSucc:
+            nextNode = SearchNode(currentNode,succ)
+
+            expanded = False
+            for exp in expandedNodes:
+                if(exp.state == nextNode.state):
+                    expanded = True
+            if(not expanded):
+                frontier.push(nextNode,succ[2])
     util.raise_not_defined()
 
 def null_heuristic(state, problem=None):
@@ -212,6 +240,34 @@ def null_heuristic(state, problem=None):
 def a_star_search(problem, heuristic=null_heuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    startSucc = problem.get_successors(problem.get_start_state())
+    startNode = SearchNode(None,(problem.get_start_state(),"",1))
+    frontier = util.PriorityQueue()
+    expandedNodes = []
+    path = []
+    #print(problem.get_start_state())
+
+    for succ in startSucc:
+        node = SearchNode(startNode,succ)
+        frontier.push(node,succ[2])
+    
+    while not frontier.is_empty():
+        currentNode = frontier.pop()
+        expandedNodes.append(currentNode)
+        if(problem.is_goal_state(currentNode.state)):
+            path = currentNode.get_path()
+            #print(path)
+            return path
+        nextSucc = problem.get_successors(currentNode.state)
+        for succ in nextSucc:
+            nextNode = SearchNode(currentNode,succ)
+
+            expanded = False
+            for exp in expandedNodes:
+                if(exp.state == nextNode.state):
+                    expanded = True
+            if(not expanded):
+                frontier.push(nextNode,succ[2])
     util.raise_not_defined()
 
 # Abbreviations
