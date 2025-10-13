@@ -532,7 +532,17 @@ def food_heuristic(state, problem):
     """
     position, food_grid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    res = 0
+    xcount = 0
+    ycount = 0
+    for x in food_grid:
+        for y in x:
+            if(y == True):
+                dist = abs(position[0]-xcount)+abs(position[1]-ycount)
+                res += dist
+            ycount += 1
+        xcount += 1
+    return res
 
 
 def simplified_corners_heuristic(state, problem):
