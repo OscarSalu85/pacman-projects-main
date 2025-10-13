@@ -249,7 +249,7 @@ def a_star_search(problem, heuristic=null_heuristic):
 
     for succ in startSucc:
         node = SearchNode(startNode,succ)
-        frontier.push(node,succ[2])
+        frontier.push(node,heuristic(node.state,problem))
     
     while not frontier.is_empty():
         currentNode = frontier.pop()
@@ -267,7 +267,7 @@ def a_star_search(problem, heuristic=null_heuristic):
                 if(exp.state == nextNode.state):
                     expanded = True
             if(not expanded):
-                frontier.push(nextNode,succ[2])
+                frontier.push(nextNode,heuristic(nextNode.state,problem))
     util.raise_not_defined()
 
 # Abbreviations
