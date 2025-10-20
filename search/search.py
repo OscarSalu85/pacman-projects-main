@@ -233,7 +233,7 @@ def uniform_cost_search(problem):
                     if(exp.state == nextNode.state):
                         expanded = True
                 if(not expanded):
-                    frontier.push(nextNode,currentNode.cost + succ[2])
+                    frontier.push(nextNode,nextNode.cost)
     util.raise_not_defined()
 
 def null_heuristic(state, problem=None):
@@ -272,7 +272,7 @@ def a_star_search(problem, heuristic=null_heuristic):
             nextSucc = problem.get_successors(currentNode.state)
             for succ in nextSucc:
                 nextNode = SearchNode(currentNode,succ)
-                frontier.push(nextNode,heuristic(nextNode.state,problem))
+                frontier.push(nextNode,nextNode.cost + heuristic(nextNode.state,problem))
     util.raise_not_defined()
 
 # Abbreviations
