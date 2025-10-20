@@ -185,8 +185,8 @@ def breadth_first_search(problem):
         for exp in expandedNodes:
                 if(exp.state == currentNode.state):
                     expanded = True
-        expandedNodes.append(currentNode)
         if(not expanded):
+            expandedNodes.append(currentNode)
             if(problem.is_goal_state(currentNode.state)):
                 path = currentNode.get_path()
                 #print(path)
