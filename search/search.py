@@ -168,40 +168,43 @@ def breadth_first_search(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     startSucc = problem.get_successors(problem.get_start_state())
-    startNode = SearchNode(None,(problem.get_start_state(),"",1))
+    startNode = SearchNode(None,(problem.get_start_state(),"",0))
     frontier = util.Queue()
     expandedNodes = []
     path = []
     #print(problem.get_start_state())
-
+    expandedNodes.append(startNode)
+    counter = 1
     for succ in startSucc:
         node = SearchNode(startNode,succ)
         frontier.push(node)
     
     while not frontier.is_empty():
+        expanded = False
         currentNode = frontier.pop()
-        expandedNodes.append(currentNode)
-        if(problem.is_goal_state(currentNode.state)):
-            path = currentNode.get_path()
-            #print(path)
-            return path
-        nextSucc = problem.get_successors(currentNode.state)
-        for succ in nextSucc:
-            nextNode = SearchNode(currentNode,succ)
-
-            expanded = False
-            for exp in expandedNodes:
-                if(exp.state == nextNode.state):
+        for exp in expandedNodes:
+                if(exp.state == currentNode.state):
                     expanded = True
-            if(not expanded):
+        expandedNodes.append(currentNode)
+        if(not expanded):
+            if(problem.is_goal_state(currentNode.state)):
+                path = currentNode.get_path()
+                #print(path)
+                print(counter)
+                return path
+            nextSucc = problem.get_successors(currentNode.state)
+            counter += 1
+            for succ in nextSucc:
+                nextNode = SearchNode(currentNode,succ)
                 frontier.push(nextNode)
+       
     util.raise_not_defined()
 
 def uniform_cost_search(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     startSucc = problem.get_successors(problem.get_start_state())
-    startNode = SearchNode(None,(problem.get_start_state(),"",1))
+    startNode = SearchNode(None,(problem.get_start_state(),"",0))
     frontier = util.PriorityQueue()
     expandedNodes = []
     path = []
@@ -241,7 +244,7 @@ def a_star_search(problem, heuristic=null_heuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     startSucc = problem.get_successors(problem.get_start_state())
-    startNode = SearchNode(None,(problem.get_start_state(),"",1))
+    startNode = SearchNode(None,(problem.get_start_state(),"",0))
     frontier = util.PriorityQueue()
     expandedNodes = []
     path = []
