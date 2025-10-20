@@ -110,13 +110,13 @@ class SearchNode:
         return path
     
     # Consider 2 nodes to be equal if their coordinates are equal (regardless of everything else)
-    # def __eq__(self, __o: obj) -> bool:
-    #     if (type(__o) is SearchNode):
-    #         return self.__state == __o.__state
-    #     return False
+    def __eq__(self, __o: object) -> bool:
+         if (type(__o) is SearchNode):
+             return self.__state == __o.__state
+         return False
 
-    # # def __hash__(self) -> int:
-    # #     return hash(self.__state)
+    def __hash__(self) -> int:
+         return hash(self.__state)
 
 def depth_first_search(problem):
     """
@@ -182,7 +182,7 @@ def breadth_first_search(problem):
         expanded = False
         currentNode = frontier.pop()
         for exp in expandedNodes:
-                if(exp.state == currentNode.state):
+                if(exp == currentNode):
                     expanded = True
         if(not expanded):
             expandedNodes.append(currentNode)
@@ -216,7 +216,7 @@ def uniform_cost_search(problem):
         expanded = False
         currentNode = frontier.pop()
         for exp in expandedNodes:
-                if(exp.state == currentNode.state):
+                if(exp == currentNode):
                     expanded = True
         if(not expanded):
             expandedNodes.append(currentNode)
@@ -250,6 +250,7 @@ def a_star_search(problem, heuristic=null_heuristic):
     startNode = SearchNode(None,(problem.get_start_state(),"",0))
     frontier = util.PriorityQueue()
     expandedNodes = []
+    expandedNodes.append(startNode)
     path = []
     #print(problem.get_start_state())
 
@@ -261,7 +262,7 @@ def a_star_search(problem, heuristic=null_heuristic):
         expanded = False
         currentNode = frontier.pop()
         for exp in expandedNodes:
-                if(exp.state == currentNode.state):
+                if(exp == currentNode):
                     expanded = True
         if(not expanded):
             expandedNodes.append(currentNode)
