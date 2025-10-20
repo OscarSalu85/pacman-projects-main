@@ -204,6 +204,7 @@ def uniform_cost_search(problem):
     startNode = SearchNode(None,(problem.get_start_state(),"",0))
     frontier = util.PriorityQueue()
     expandedNodes = []
+    expandedNodes.append(startNode)
     path = []
     #print(problem.get_start_state())
 
