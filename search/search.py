@@ -258,21 +258,20 @@ def a_star_search(problem, heuristic=null_heuristic):
         frontier.push(node,heuristic(node.state,problem))
     
     while not frontier.is_empty():
+        expanded = False
         currentNode = frontier.pop()
-        expandedNodes.append(currentNode)
-        if(problem.is_goal_state(currentNode.state)):
-            path = currentNode.get_path()
-            #print(path)
-            return path
-        nextSucc = problem.get_successors(currentNode.state)
-        for succ in nextSucc:
-            nextNode = SearchNode(currentNode,succ)
-
-            expanded = False
-            for exp in expandedNodes:
-                if(exp.state == nextNode.state):
+        for exp in expandedNodes:
+                if(exp.state == currentNode.state):
                     expanded = True
-            if(not expanded):
+        if(not expanded):
+            expandedNodes.append(currentNode)
+            if(problem.is_goal_state(currentNode.state)):
+                path = currentNode.get_path()
+                #print(path)
+                return path
+            nextSucc = problem.get_successors(currentNode.state)
+            for succ in nextSucc:
+                nextNode = SearchNode(currentNode,succ)
                 frontier.push(nextNode,heuristic(nextNode.state,problem))
     util.raise_not_defined()
 
