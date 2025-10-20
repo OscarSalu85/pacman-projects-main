@@ -174,7 +174,6 @@ def breadth_first_search(problem):
     path = []
     #print(problem.get_start_state())
     expandedNodes.append(startNode)
-    counter = 1
     for succ in startSucc:
         node = SearchNode(startNode,succ)
         frontier.push(node)
@@ -190,10 +189,8 @@ def breadth_first_search(problem):
             if(problem.is_goal_state(currentNode.state)):
                 path = currentNode.get_path()
                 #print(path)
-                print(counter)
                 return path
             nextSucc = problem.get_successors(currentNode.state)
-            counter += 1
             for succ in nextSucc:
                 nextNode = SearchNode(currentNode,succ)
                 frontier.push(nextNode)
@@ -215,22 +212,27 @@ def uniform_cost_search(problem):
         frontier.push(node,succ[2])
     
     while not frontier.is_empty():
+        expanded = False
         currentNode = frontier.pop()
-        expandedNodes.append(currentNode)
-        if(problem.is_goal_state(currentNode.state)):
-            path = currentNode.get_path()
-            #print(path)
-            return path
-        nextSucc = problem.get_successors(currentNode.state)
-        for succ in nextSucc:
-            nextNode = SearchNode(currentNode,succ)
-
-            expanded = False
-            for exp in expandedNodes:
-                if(exp.state == nextNode.state):
+        for exp in expandedNodes:
+                if(exp.state == currentNode.state):
                     expanded = True
-            if(not expanded):
-                frontier.push(nextNode,succ[2])
+        if(not expanded):
+            expandedNodes.append(currentNode)
+            if(problem.is_goal_state(currentNode.state)):
+                path = currentNode.get_path()
+                #print(path)
+                return path
+            nextSucc = problem.get_successors(currentNode.state)
+            for succ in nextSucc:
+                nextNode = SearchNode(currentNode,succ)
+
+                expanded = False
+                for exp in expandedNodes:
+                    if(exp.state == nextNode.state):
+                        expanded = True
+                if(not expanded):
+                    frontier.push(nextNode,succ[2])
     util.raise_not_defined()
 
 def null_heuristic(state, problem=None):
