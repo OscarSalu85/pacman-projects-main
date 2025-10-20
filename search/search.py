@@ -233,7 +233,7 @@ def uniform_cost_search(problem):
                     if(exp.state == nextNode.state):
                         expanded = True
                 if(not expanded):
-                    frontier.push(nextNode,succ[2])
+                    frontier.push(nextNode,currentNode.cost + succ[2])
     util.raise_not_defined()
 
 def null_heuristic(state, problem=None):
