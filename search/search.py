@@ -287,29 +287,41 @@ def a_star_search(problem, heuristic=null_heuristic):
         "*** YOUR CODE HERE ***"
         startSucc = problem.get_successors(problem.get_start_state())
         startNode = SearchNode(None,(problem.get_start_state(),"",0))
+        #inziliaze the frontier
         frontier = util.PriorityQueue()
+        #inizilize the expandednodes
         expandedNodes = []
         expandedNodes.append(startNode)
         path = []
         #print(problem.get_start_state())
 
+        #put the first node and their sucessors in the frontier with the cost and heurisitic
         for succ in startSucc:
             node = SearchNode(startNode,succ)
             frontier.push(node,node.cost+ heuristic(node.state, problem))
-        
+
+        #while frontier not empty
         while not frontier.is_empty():
+            #varable used to check if a node has been expanded or not
             expanded = False
             currentNode = frontier.pop()
             for exp in expandedNodes:
+                    ##check if the node is alredy expanded or not
                     if(exp == currentNode):
                         expanded = True
+            #if not expanded
             if(not expanded):
+                #add to the expanded
                 expandedNodes.append(currentNode)
+                #check if this is node is the goal node
                 if(problem.is_goal_state(currentNode.state)):
                     path = currentNode.get_path()
                     #print(path)
+                    #return the solution path
                     return path
+                #get the node sucessors
                 nextSucc = problem.get_successors(currentNode.state)
+                #add the sucessors to the frontier with the cost and heuristic
                 for succ in nextSucc:
                     nextNode = SearchNode(currentNode,succ)
                     frontier.push(nextNode,nextNode.cost + heuristic(nextNode.state,problem))

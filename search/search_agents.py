@@ -532,7 +532,13 @@ def food_heuristic(state, problem):
     """
     position, food_grid = state
     "*** YOUR CODE HERE ***"
+    """ We first create a relaxed problem where we assume that the cost to eat all remaining food can be approximated
+    by the distance to the farthest piece of food from the current position. First we tried using the manhattan distance 
+    and got good results. But we discoverd another function which give more correct approximation which is maze_distance 
+    because it uses both astar and manhattan distance(takes into account the walls and actual maze paths with astar). 
+    We calculate the maze_distance to each food and we save the maximum distance as the heuristic."""
     max_distance=0 #values to return
+    #postion of the foods
     food_coord = food_grid.as_list()
 
     for i in food_coord:
