@@ -135,28 +135,40 @@ def depth_first_search(problem):
     "*** YOUR CODE HERE ***"
     
     startSucc = problem.get_successors(problem.get_start_state())
+    #get the start node
     startNode = SearchNode(None,(problem.get_start_state(),"",1))
+    #inizilize the frontier which is stack in dfs
     frontier = util.Stack()
+    #inziliaze the expaneded nodes
     expandedNodes = []
+    #we will save the path in order return
     path = []
     #print(problem.get_start_state())
 
+    #add the first node and its sucessors to frontier
     for succ in startSucc:
         node = SearchNode(startNode,succ)
         frontier.push(node)
-    
+
+    #check if frontier is not empty or not
     while not frontier.is_empty():
+        #get the current node
         currentNode = frontier.pop()
+        #add to expandednode
         expandedNodes.append(currentNode)
+        #check if this node is the goal
         if(problem.is_goal_state(currentNode.state)):
             path = currentNode.get_path()
             #print(path)
+            #return the path for the solution
             return path
+        #get the next sucessors
         nextSucc = problem.get_successors(currentNode.state)
         for succ in nextSucc:
             nextNode = SearchNode(currentNode,succ)
             frontier.push(nextNode)
             for exp in expandedNodes:
+                #if already expanded then take out of the frontier
                 if(exp.state == nextNode.state):
                     #print(succ)
                     frontier.pop()  
@@ -167,30 +179,44 @@ def depth_first_search(problem):
 def breadth_first_search(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+
     startSucc = problem.get_successors(problem.get_start_state())
     startNode = SearchNode(None,(problem.get_start_state(),"",0))
+    #inziliaze the frontier which is queue in bfs
     frontier = util.Queue()
+    #inizialize the expanded nodes
     expandedNodes = []
+    # inizialize the path
     path = []
     #print(problem.get_start_state())
     expandedNodes.append(startNode)
+    #add the first node and its sucessors to frontier
     for succ in startSucc:
         node = SearchNode(startNode,succ)
         frontier.push(node)
-    
+
+     #check if frontier is not empty or not
     while not frontier.is_empty():
+        #variable to determine if a node is already expanded or not
         expanded = False
+        #get the current node
         currentNode = frontier.pop()
+        #check if the node is alredy expanded or not
         for exp in expandedNodes:
                 if(exp == currentNode):
                     expanded = True
+        #if node already not expanded
         if(not expanded):
+            #add to the expandednode
             expandedNodes.append(currentNode)
+            #check if this node is the goal node
             if(problem.is_goal_state(currentNode.state)):
                 path = currentNode.get_path()
                 #print(path)
+                # return the path to the solution
                 return path
             nextSucc = problem.get_successors(currentNode.state)
+            # get the sucessors of current node and add to the frontier
             for succ in nextSucc:
                 nextNode = SearchNode(currentNode,succ)
                 frontier.push(nextNode)
@@ -200,39 +226,52 @@ def breadth_first_search(problem):
 def uniform_cost_search(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    
     startSucc = problem.get_successors(problem.get_start_state())
     startNode = SearchNode(None,(problem.get_start_state(),"",0))
+    #initialize the frontier which is prority queue
     frontier = util.PriorityQueue()
+    #initialize the expanded node
     expandedNodes = []
     expandedNodes.append(startNode)
     path = []
     #print(problem.get_start_state())
 
+    #add the first node and its sucessors to frontier
     for succ in startSucc:
         node = SearchNode(startNode,succ)
         frontier.push(node,succ[2])
     
+    #while frontier not empty
     while not frontier.is_empty():
+        #bool to analyze if node is already expanded or not
         expanded = False
+        #get the current node
         currentNode = frontier.pop()
         for exp in expandedNodes:
+                  #check if the node is alredy expanded or not
                 if(exp == currentNode):
                     expanded = True
+        #if node already not expanded
         if(not expanded):
+            #add to expanded node
             expandedNodes.append(currentNode)
+             #check if this node is the goal node
             if(problem.is_goal_state(currentNode.state)):
                 path = currentNode.get_path()
                 #print(path)
                 return path
+            # get the sucessors of current node and add to the frontier
             nextSucc = problem.get_successors(currentNode.state)
             for succ in nextSucc:
                 nextNode = SearchNode(currentNode,succ)
-
                 expanded = False
                 for exp in expandedNodes:
                     if(exp.state == nextNode.state):
+                        #check if already expanded or not
                         expanded = True
                 if(not expanded):
+                    #push the prority queue taking into account the cost
                     frontier.push(nextNode,nextNode.cost)
     util.raise_not_defined()
 
