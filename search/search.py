@@ -302,7 +302,7 @@ def a_star_search(problem, heuristic=null_heuristic):
 
         #while frontier not empty
         while not frontier.is_empty():
-            #varable used to check if a node has been expanded or not
+            #variable used to check if a node has been expanded or not
             expanded = False
             currentNode = frontier.pop()
             for exp in expandedNodes:
