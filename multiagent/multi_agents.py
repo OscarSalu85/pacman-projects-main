@@ -48,7 +48,6 @@ class ReflexAgent(Agent):
         chosen_index = random.choice(best_indices) # Pick randomly among the best
 
         "Add more of your code here if you want to"
-
         return legal_moves[chosen_index]
 
     def evaluation_function(self, current_game_state, action):
@@ -74,7 +73,14 @@ class ReflexAgent(Agent):
         new_scared_times = [ghostState.scared_timer for ghostState in new_ghost_states]
         
         "*** YOUR CODE HERE ***"
-        return successor_game_state.get_score()
+        food_list = new_food.as_list()
+        score = 0
+        """
+        for food in food_list:
+            score -= manhattan_distance(food, new_pos)
+            print(food)
+        """
+        return score
 
 def score_evaluation_function(current_game_state):
     """
@@ -136,7 +142,57 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raise_not_defined()
+        """ Initialize variables 
+        Pacment agent max player 
+        Ghost min player
+        """
+
+        #minmax function with recursion
+        def minmax(depth,state,agent_index):
+            if state.is_win() or state.is_lose() or self.depth == depth: #Base case
+                return self.evaluation_function(state)
+            
+            legal_action = state.get_legal_actions(agent_index)
+            if not legal_action : # if there are no legal actions then return what we have now
+                return self.evaluation_function(state)
+            
+            num_agents = state.get_num_agents() #num of agents
+            next_agent_index = (agent_index+1) % num_agents
+            next_depth = depth  # by defalut we assume that a ply has not been completed
+            if(next_agent_index ==0 ): # check if we are have finsihed the ply
+                next_depth = depth +1
+
+            if agent_index == 0: #max player --> PACMAN
+                max_score = float('-inf')
+                for i in legal_action:
+                    next_state = state.generate_successor(agent_index, i)
+                    max_score = max(minmax(next_depth,next_state,next_agent_index), max_score)
+                return max_score
+            
+            else: #min player --> GHOSTS
+                min_score = float('inf')
+                for i in legal_action:
+                    next_state = state.generate_successor(agent_index, i)
+                    min_score = min(minmax(next_depth,next_state,next_agent_index), min_score)
+                return min_score
+
+
+        best_action = None
+        best_score = float('-inf')
+        agent_index = self.index
+
+        for action in game_state.get_legal_actions(agent_index):
+            #we start by checking to the next states
+            next_game_state = game_state.generate_successor(agent_index, action)
+            #assuming that we start with agent_index equal to 0 so we start by the next agent which is ghost and 
+            #the minmax will try with other ghosts and states
+            score = minmax(0,next_game_state,1)
+            if score > best_score:
+                best_score = score
+                best_action = action
+
+        return best_action 
+        #util.raise_not_defined()
     
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
