@@ -205,7 +205,80 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluation_function
         """
         "*** YOUR CODE HERE ***"
-        util.raise_not_defined()
+        def max_value(state, alpha, beta, agent_index, depth):
+            if state.is_win() or state.is_lose() or self.depth == depth: #Base case
+                return self.evaluation_function(state)
+            
+            legal_action = state.get_legal_actions(agent_index)
+            if not legal_action : # if there are no legal actions then return what we have now
+                return self.evaluation_function(state)
+
+            value = float('-inf')
+            num_agents = state.get_num_agents() #num of agents
+            next_agent_index = (agent_index+1) % num_agents
+            next_depth = depth  # by defalut we assume that a ply has not been completed
+            if(next_agent_index ==0 ): # check if we are have finsihed the ply
+                next_depth = depth +1
+
+            for action in legal_action: 
+                next_state = state.generate_successor(agent_index,action)
+                if next_agent_index == 0: #completed a ply hence max node
+                    value = max(value, max_value(next_state, alpha, beta, next_agent_index, next_depth))
+                else: #middle of ply hence min node 
+                    value = max(value, min_value(next_state, alpha, beta, next_agent_index, next_depth))
+                if value>beta:
+                    return value
+                alpha = max(alpha, value)
+            return value
+        
+        def min_value(state,alpha,beta, agent_index, depth):
+            if state.is_win() or state.is_lose() or self.depth == depth: #Base case
+                return self.evaluation_function(state)
+            
+            legal_action = state.get_legal_actions(agent_index)
+            if not legal_action : # if there are no legal actions then return what we have now
+                return self.evaluation_function(state)
+            
+            value= float('inf')
+
+            num_agents = state.get_num_agents() #num of agents
+            next_agent_index = (agent_index+1) % num_agents
+            next_depth = depth  # by defalut we assume that a ply has not been completed
+            if(next_agent_index ==0 ): # check if we are have finsihed the ply
+                next_depth = depth +1
+
+            for action in legal_action:
+                successor_state = state.generate_successor(agent_index,action)
+                if next_agent_index !=0: #min node
+                    value = min(value, min_value(successor_state, alpha, beta, next_agent_index, next_depth))
+                else: #max node
+                    value = min(value,max_value(successor_state, alpha, beta, next_agent_index, next_depth))
+
+                if value<alpha:
+                    return value
+                beta = min(beta, value)
+            return value
+        
+        best_action = None
+        best_score = float('-inf')
+        agent_index = self.index
+        alpha = float('-inf')
+        beta = float('inf')
+        value = float('-inf')
+
+        for action in game_state.get_legal_actions(agent_index):
+            #we start by checking to the next states
+            next_game_state = game_state.generate_successor(agent_index, action)
+            #we start by the next ghost which 1 and we are still at depth 0
+            value = min_value(next_game_state, alpha, beta, 1, 0)
+            #update best score and action
+            if value > best_score:
+                best_score = value
+                best_action = action
+            #update alpha at the root
+            alpha = max(alpha, best_score)
+        return best_action
+        #util.raise_not_defined()
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
