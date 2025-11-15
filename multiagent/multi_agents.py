@@ -74,13 +74,36 @@ class ReflexAgent(Agent):
         
         "*** YOUR CODE HERE ***"
         food_list = new_food.as_list()
+
         score = 0
-        """
-        for food in food_list:
-            score -= manhattan_distance(food, new_pos)
-            print(food)
-        """
+
+        if food_list:
+            closest_food = min(manhattan_distance(food, new_pos) for food in food_list)
+            score -= closest_food
+        else:
+            return 9999999999
+
+        score -= 20 * len(food_list)
+
+        old_pos = current_game_state.get_pacman_position()
+        old_dist = min(manhattan_distance(food, old_pos) for food in food_list)
+        new_dist = closest_food
+
+        if new_dist > old_dist:
+            score -= 10
+
+        ghost_dist = min(manhattan_distance(g.get_position(), new_pos) for g in new_ghost_states)
+
+        if ghost_dist == 0 and all(t == 0 for t in new_scared_times):
+            return -9999999999
+        if ghost_dist < 2 and all(t == 0 for t in new_scared_times):
+            score -= 500
+
+        if action == "Stop":
+            score -= 25
+
         return score
+
 
 def score_evaluation_function(current_game_state):
     """
