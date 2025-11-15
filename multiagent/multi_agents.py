@@ -73,35 +73,25 @@ class ReflexAgent(Agent):
         new_scared_times = [ghostState.scared_timer for ghostState in new_ghost_states]
         
         "*** YOUR CODE HERE ***"
+        #food cordinates
         food_list = new_food.as_list()
 
-        score = 0
+        score = successor_game_state.get_score()
 
-        if food_list:
-            closest_food = min(manhattan_distance(food, new_pos) for food in food_list)
-            score -= closest_food
-        else:
-            return 9999999999
+        food_distance = float('inf')
 
-        score -= 20 * len(food_list)
+        for i in food_list: 
+            food_distance = min(manhattan_distance(new_pos,i),food_distance)
 
-        old_pos = current_game_state.get_pacman_position()
-        old_dist = min(manhattan_distance(food, old_pos) for food in food_list)
-        new_dist = closest_food
+        score += 10/food_distance #Add this porption to the score so pacman moves to this state
 
-        if new_dist > old_dist:
-            score -= 10
-
-        ghost_dist = min(manhattan_distance(g.get_position(), new_pos) for g in new_ghost_states)
-
-        if ghost_dist == 0 and all(t == 0 for t in new_scared_times):
-            return -9999999999
-        if ghost_dist < 2 and all(t == 0 for t in new_scared_times):
-            score -= 500
-
-        if action == "Stop":
-            score -= 25
-
+        ''' Look the distance with the ghosts and if the distance is close and the ghost 
+        is not scared then penalize '''
+        for i in new_ghost_states:
+            ghost_distance = manhattan_distance(i.get_position(),new_pos)
+            if(ghost_distance<=1 and i.scared_timer == 0):
+                score *= 0.001 # score/1000
+    
         return score
 
 
@@ -174,10 +164,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         def minmax(depth,state,agent_index):
             if state.is_win() or state.is_lose() or self.depth == depth: #Base case
                 return self.evaluation_function(state)
-            
-            legal_action = state.get_legal_actions(agent_index)
-            if not legal_action : # if there are no legal actions then return what we have now
-                return self.evaluation_function(state)
+
             
             num_agents = state.get_num_agents() #num of agents
             next_agent_index = (agent_index+1) % num_agents
@@ -187,14 +174,14 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
             if agent_index == 0: #max player --> PACMAN
                 max_score = float('-inf')
-                for i in legal_action:
+                for i in state.get_legal_actions(agent_index):
                     next_state = state.generate_successor(agent_index, i)
                     max_score = max(minmax(next_depth,next_state,next_agent_index), max_score)
                 return max_score
             
             else: #min player --> GHOSTS
                 min_score = float('inf')
-                for i in legal_action:
+                for i in state.get_legal_actions(agent_index):
                     next_state = state.generate_successor(agent_index, i)
                     min_score = min(minmax(next_depth,next_state,next_agent_index), min_score)
                 return min_score
@@ -231,10 +218,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         def max_value(state, alpha, beta, agent_index, depth):
             if state.is_win() or state.is_lose() or self.depth == depth: #Base case
                 return self.evaluation_function(state)
-            
-            legal_action = state.get_legal_actions(agent_index)
-            if not legal_action : # if there are no legal actions then return what we have now
-                return self.evaluation_function(state)
 
             value = float('-inf')
             num_agents = state.get_num_agents() #num of agents
@@ -243,7 +226,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             if(next_agent_index ==0 ): # check if we are have finsihed the ply
                 next_depth = depth +1
 
-            for action in legal_action: 
+            for action in state.get_legal_actions(agent_index): 
                 next_state = state.generate_successor(agent_index,action)
                 if next_agent_index == 0: #completed a ply hence max node
                     value = max(value, max_value(next_state, alpha, beta, next_agent_index, next_depth))
@@ -257,11 +240,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         def min_value(state,alpha,beta, agent_index, depth):
             if state.is_win() or state.is_lose() or self.depth == depth: #Base case
                 return self.evaluation_function(state)
-            
-            legal_action = state.get_legal_actions(agent_index)
-            if not legal_action : # if there are no legal actions then return what we have now
-                return self.evaluation_function(state)
-            
+
             value= float('inf')
 
             num_agents = state.get_num_agents() #num of agents
@@ -270,13 +249,12 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             if(next_agent_index ==0 ): # check if we are have finsihed the ply
                 next_depth = depth +1
 
-            for action in legal_action:
-                successor_state = state.generate_successor(agent_index,action)
+            for action in state.get_legal_actions(agent_index):
+                next_state = state.generate_successor(agent_index,action)
                 if next_agent_index !=0: #min node
-                    value = min(value, min_value(successor_state, alpha, beta, next_agent_index, next_depth))
+                    value = min(value, min_value(next_state, alpha, beta, next_agent_index, next_depth))
                 else: #max node
-                    value = min(value,max_value(successor_state, alpha, beta, next_agent_index, next_depth))
-
+                    value = min(value,max_value(next_state, alpha, beta, next_agent_index, next_depth))
                 if value<alpha:
                     return value
                 beta = min(beta, value)
