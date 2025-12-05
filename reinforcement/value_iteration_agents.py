@@ -66,6 +66,27 @@ class ValueIterationAgent(ValueEstimationAgent):
           value iteration, V_k+1(...) depends on V_k(...)'s.
         """
         "*** YOUR CODE HERE ***"
+        for i in range(self.iterations):
+                new_values = util.Counter()
+
+                for state in self.mdp.get_states():
+
+                    if self.mdp.is_terminal(state):
+                        new_values[state] = 0
+
+                    else:
+                        actions = self.mdp.get_possible_actions(state)
+                        if actions:
+                            max_values = float('-inf')
+                            for action in actions:
+                                q_value = self.compute_q_value_from_values(state, action)
+                                if q_value > max_values:
+                                    max_values = q_value
+
+                            new_values[state] = max_values
+
+                self.values = new_values
+
             
     def get_value(self, state):
         """
@@ -79,6 +100,12 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
+        value = 0
+        for next_state, probability in self.mdp.get_transition_states_and_probs(state, action):
+            reward = self.mdp.get_reward(state, action, next_state)
+            value += probability * (reward + (self.discount * self.values[next_state]))
+    
+        return value
         util.raise_not_defined()
 
     def compute_action_from_values(self, state):
@@ -91,6 +118,21 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
+        actions =  self.mdp.get_possible_actions(state)
+
+        if not actions:
+            return None
+
+        best_action = None
+        best_value = float('-inf')
+
+        for action in actions:
+            value = self.compute_q_value_from_values(state, action)
+            if value>best_value:
+                best_value = value
+                best_action = action
+        
+        return best_action
         util.raise_not_defined()
 
     def get_policy(self, state):
