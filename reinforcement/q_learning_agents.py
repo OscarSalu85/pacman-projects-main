@@ -70,6 +70,7 @@ class QLearningAgent(ReinforcementAgent):
             return 0.0
         
         max_value = float('-inf')
+        #return the max_value
         for action in actions:
             value = self.get_q_value(state,action)
             if value >max_value:
@@ -88,6 +89,7 @@ class QLearningAgent(ReinforcementAgent):
 
         actions = self.get_legal_actions(state)
         
+        #for the terminal states
         if not actions:
             return None
         
@@ -95,11 +97,13 @@ class QLearningAgent(ReinforcementAgent):
 
         best_actions = []
 
+        #save the actions that the q_value is equal to max_q_value
         for action in actions:
             if self.get_q_value(state, action) == max_value:
                 best_actions.append(action)
-            
-        return random.choice(best_actions) #tie breaker
+        
+        #tie breaker
+        return random.choice(best_actions) 
         util.raise_not_defined()
 
     def get_action(self, state):
@@ -118,11 +122,13 @@ class QLearningAgent(ReinforcementAgent):
         action = None
         "*** YOUR CODE HERE ***"
 
+        #for the terminal states
         if not legal_actions:
             return None
         
         if util.flip_coin(self.epsilon):
             action = random.choice(legal_actions)
+            
         else: 
             action = self.compute_action_from_q_values(state)
         
@@ -142,8 +148,10 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         old_value =  self.get_q_value(state, action)
         future_value = self.compute_value_from_q_values(next_state)
-        sample = reward + (self.discount * future_value)
-        new_value = ((1 - self.alpha) * old_value) + (self.alpha * sample)
+        max_part_formula = reward + (self.discount * future_value)
+        #apply the formula
+        new_value = ((1 - self.alpha) * old_value) + (self.alpha * max_part_formula)
+        #update the q_values
         self.q_values[(state, action)] = new_value
 
         #util.raise_not_defined()

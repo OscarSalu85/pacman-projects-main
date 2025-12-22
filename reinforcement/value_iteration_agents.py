@@ -66,28 +66,28 @@ class ValueIterationAgent(ValueEstimationAgent):
           value iteration, V_k+1(...) depends on V_k(...)'s.
         """
         "*** YOUR CODE HERE ***"
+        #get the number of iterations 
         for i in range(self.iterations):
+                # to save the new values
                 new_values = util.Counter()
-
+                #iterate all the states
                 for state in self.mdp.get_states():
-
+                    # if state is terminal then new values are 0
                     if self.mdp.is_terminal(state):
                         new_values[state] = 0
-
                     else:
+                        # get the list of actions
                         actions = self.mdp.get_possible_actions(state)
                         if actions:
                             max_values = float('-inf')
+                            #save the maximum q value
                             for action in actions:
                                 q_value = self.compute_q_value_from_values(state, action)
                                 if q_value > max_values:
                                     max_values = q_value
-
                             new_values[state] = max_values
-
                 self.values = new_values
 
-            
     def get_value(self, state):
         """
           Return the value of the state (computed in __init__).
@@ -101,10 +101,13 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         value = 0
-        for next_state, probability in self.mdp.get_transition_states_and_probs(state, action):
+        # get the next_state and its probablity from the mdp
+        for i in self.mdp.get_transition_states_and_probs(state, action):
+            next_state, probability = i
+            # get the rewared
             reward = self.mdp.get_reward(state, action, next_state)
+            #apply the formula 
             value += probability * (reward + (self.discount * self.values[next_state]))
-    
         return value
         util.raise_not_defined()
 
@@ -117,15 +120,18 @@ class ValueIterationAgent(ValueEstimationAgent):
           there are no legal actions, which is the case at the
           terminal state, you should return None.
         """
+        #Get all the actions
         "*** YOUR CODE HERE ***"
         actions =  self.mdp.get_possible_actions(state)
 
+        #if there are no action then return none 
         if not actions:
             return None
 
         best_action = None
         best_value = float('-inf')
 
+        #compute the values and return the max value with its action
         for action in actions:
             value = self.compute_q_value_from_values(state, action)
             if value>best_value:

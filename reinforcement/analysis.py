@@ -68,7 +68,7 @@ def question8():
     answer_epsilon = None
     answer_learning_rate = None
     #return answer_epsilon, answer_learning_rate
-    #THE NUMBER OF ITERIONS IS SMALL FOR EPSILON AND LEARNING RATE
+    #The number OF Iterations is small for the epsilon AND learning rate
     return 'NOT POSSIBLE'
     # If not possible, return 'NOT POSSIBLE'
 
